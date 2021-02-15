@@ -1,0 +1,10 @@
+VN={S, D, R},
+VT={a, b, c},
+P={
+1. S -> aS
+2. S -> bS
+3. S -> cD
+4. D -> bD
+5. D -> cR
+6. D -> a
+7. R -> b }
