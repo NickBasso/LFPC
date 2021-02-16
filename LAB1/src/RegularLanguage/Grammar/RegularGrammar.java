@@ -1,29 +1,30 @@
-package Grammar;
+package RegularLanguage.Grammar;
 
 import Exceptions.WrongProductionException;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Scanner;
 
-public class GrammarReader {
+public class RegularGrammar {
     // ------------------------ Fields ------------------------
-    private String inputPath = "src/Grammar/GrammarInput.txt";
+    private String inputPath = "src/RegularLanguage/Grammar/GrammarInput.txt";
     private String input = "";
     // pr - production rules
-    private HashMap<Character, String> pr = new HashMap<>();
+    private HashMap<Character, ArrayList<String>> pr = new HashMap<>();
     // vt - set of terminal symbols, vn - set of non-terminal symbols
     private HashSet<Character> vt = new HashSet<>(), vn = new HashSet<>();
 
     // ------------------------ Constructors ------------------------
 
-    public GrammarReader() throws WrongProductionException {
+    public RegularGrammar() throws WrongProductionException {
         readGrammar();
     }
 
-    public GrammarReader(String inputPath) throws WrongProductionException {
+    public RegularGrammar(String inputPath) throws WrongProductionException {
         this.inputPath = inputPath;
         readGrammar();
     }
@@ -64,6 +65,7 @@ public class GrammarReader {
 
         // read && save production rules
         if(input.charAt(i) == 'P' && input.charAt(i + 1) == '=' && input.charAt(i + 2) == '{') {
+            i += 4;
 
             while(Character.isDigit(input.charAt(i)) && input.charAt(i + 1) == '.') {
                 Character from;
@@ -71,6 +73,7 @@ public class GrammarReader {
 
                 i += 2;
 
+                // to the left of derivation sign
                 if(vn.contains(input.charAt(i)) && !vt.contains(input.charAt(i)) && input.charAt(i + 1) == '-'){
                     from = input.charAt(i);
                     i += 3;
@@ -78,35 +81,41 @@ public class GrammarReader {
                 else
                     throw new WrongProductionException();
 
+                // to the right of derivation sign
                 StringBuilder sb = new StringBuilder("");
 
                 if(!vn.contains(input.charAt(i)) && vt.contains(input.charAt(i))) {
                     sb.append(input.charAt(i));
                     i++;
 
-                    if(input.charAt(i) != '\n' && vn.contains(input.charAt(i)) && !vt.contains(input.charAt(i))){
-                        sb.append(input.charAt(i + 1));
-                        i += 2;
+                    // if we have a non-terminal symbol at the end
+                    if(input.charAt(i) != '\n' && vn.contains(input.charAt(i)) && !vt.contains(input.charAt(i))) {
+                        sb.append(input.charAt(i));
+                        i++;
                     }
-                    else
+                    // and if we don't have non-terminal symbol at the end
+                    else if(input.charAt(i) != '\n' && input.charAt(i) != '}')
                         throw new WrongProductionException();
 
                     to = sb.toString();
+                    ArrayList<String> vals = new ArrayList<>(pr.getOrDefault(from, new ArrayList<>()));
+                    vals.add(to);
+                    pr.put(from, vals);
 
-                    pr.putIfAbsent(from, to);
+                    i++;
                 }
                 else
                     throw new WrongProductionException();
-
             }
         } else
             throw new WrongProductionException("Start of Production rules' section not found,\nshould be \"P={\n1. ...\n}");
 
 
+        /*
         System.out.println(vn);
         System.out.println(vt);
         System.out.println(pr);
-
+        */
     }
 
     private void readInput() {
@@ -149,7 +158,7 @@ public class GrammarReader {
 
     // ------------------------ Getters ------------------------
 
-    public HashMap<Character, String> getProductionRules() {
+    public HashMap<Character, ArrayList<String>> getProductionRules() {
 
 
         return pr;
