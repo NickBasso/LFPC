@@ -1,3 +1,13 @@
+VN={S, B},
+VT={a, b},
+P={
+1. S -> a
+2. S -> aB
+3. S -> aS
+4. S -> b
+5. B -> b
+6. B -> aB }
+
 VN={S, D, R},
 VT={a, b, c},
 P={

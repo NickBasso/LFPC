@@ -17,9 +17,11 @@ public class Main {
         // vt - set of terminal symbols, vn - set of non-terminal symbols
         HashSet<Character> vt = new HashSet<>(gr.getVt()), vn = new HashSet<>(gr.getVn());
         // print the non-terminals, terminals and production rules
-        System.out.println(vn + "\n" + vt + "\n" + pr);
+        System.out.println( "Non-terminal symbols:   " + vn + "\n" +
+                            "Terminal symbols:       " + vt + "\n" +
+                            "Production rules:       " +pr + "\n");
 
         FiniteStateAutomaton fsa = new FiniteStateAutomaton(gr);
-        System.out.println(fsa.isValidWord("abbcbbcb"));
+        System.out.println(fsa.isValidWord("ab"));
     }
 }
